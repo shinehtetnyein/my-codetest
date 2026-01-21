@@ -95,4 +95,66 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     { passive: true },
   );
+
+  // Email join handling: validate and show a small success/error toast
+  const emailContainers = document.querySelectorAll('.email-input');
+  if (emailContainers.length) {
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      Object.assign(toast.style, {
+        position: 'fixed',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        bottom: isError ? '90px' : '40px',
+        background: isError ? '#f44336' : '#4caf50',
+        color: '#fff',
+        padding: '12px 18px',
+        borderRadius: '6px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        zIndex: '9999',
+        opacity: '0',
+        transition: 'opacity 200ms, transform 200ms',
+      });
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(-4px)';
+      });
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => toast.remove(), 250);
+      }, 3000);
+    }
+
+    emailContainers.forEach((containerEl) => {
+      const input = containerEl.querySelector('.email');
+      const btn = containerEl.querySelector('.join-btn');
+      if (!input || !btn) return;
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const email = (input.value || '').trim();
+        if (!email) {
+          showToast('Please enter your email', true);
+          input.focus();
+          return;
+        }
+        if (!validateEmail(email)) {
+          showToast('Please enter a valid email address', true);
+          input.focus();
+          return;
+        }
+
+        // Simulate success (replace with actual submit if needed)
+        showToast('Thanks — you joined successfully!');
+        input.value = '';
+      });
+    });
+  }
 });
